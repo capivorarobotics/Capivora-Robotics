@@ -1,0 +1,373 @@
+@import "tailwindcss";
+
+@theme {
+  /* page (swapped by the dark theme) */
+  --color-paper: #f1f3f4;
+  --color-paper-2: #e6eaec;
+  --color-panel: #dce2e5;
+  --color-ink: #0c1a22;
+  --color-muted: #4f5d66;
+  --color-line: rgb(12 26 34 / 0.12);
+  /* always-dark sections (technology, contact, footer) and their text */
+  --color-night: #0a161e;
+  --color-night-2: #122230;
+  --color-day: #edf1f3;
+  --color-soft: rgb(237 241 243 / 0.68);
+  --color-line-dark: rgb(237 241 243 / 0.14);
+  /* safety yellow: the "seen" marker. Fill only on light grounds, never text. */
+  --color-signal: #f4c20d;
+  --color-danger: #ff9486;
+  --color-grid: rgb(12 26 34 / 0.07);
+  --font-sans: var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Illustration palette (SVG art reads these so scenes follow the theme) */
+:root {
+  --art-bg-a: #e3e8eb;
+  --art-bg-b: #cdd5da;
+  --art-floor: #bcc5cb;
+  --art-floor-a: #c0c8ce;
+  --art-floor-b: #aeb8bf;
+  --art-obj: #ccd3d8;
+  --art-obj-2: #d2d9dd;
+  --art-ink: #0c1a22;
+  --art-tag-bg: #f1f3f4;
+  --art-belt-top: #a1aab1;
+  --art-belt-l: #b8c0c6;
+  --art-belt-r: #99a2a9;
+  --art-cam: #1b2328;
+  --art-mark: #f4c20d;
+  --art-mark-ink: #0c1a22;
+  --art-light: 0.3;
+}
+:root[data-theme="dark"] {
+  --art-bg-a: #1a2831;
+  --art-bg-b: #111d25;
+  --art-floor: #111c23;
+  --art-floor-a: #13202a;
+  --art-floor-b: #0e181f;
+  --art-obj: #1e2c35;
+  --art-obj-2: #22313b;
+  --art-ink: #e9eef1;
+  --art-tag-bg: #0f1e28;
+  --art-belt-top: #2a3842;
+  --art-belt-l: #34434d;
+  --art-belt-r: #243139;
+  --art-cam: #3a4750;
+  --art-light: 0.07;
+}
+
+/* Dark theme: swaps the page tokens. Chosen with the toggle and stored in localStorage. */
+:root[data-theme="dark"] {
+  --color-paper: #0a161e;
+  --color-paper-2: #0f1e28;
+  --color-panel: #152733;
+  --color-ink: #e9eef1;
+  --color-muted: #93a3ad;
+  --color-line: rgb(233 238 241 / 0.13);
+  --color-grid: rgb(233 238 241 / 0.06);
+  --color-night: #060f15;
+  --color-night-2: #0e1b24;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.55;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-signal);
+    color: #0c1a22;
+  }
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  section[id] {
+    scroll-margin-top: 0;
+  }
+}
+
+@layer components {
+  /* Nav over an always-dark section: re-point the page tokens for everything inside it. */
+  .nav-dark {
+    --color-ink: var(--color-day);
+    --color-paper: var(--color-night-2);
+    --color-muted: var(--color-soft);
+    --color-line: var(--color-line-dark);
+    color: var(--color-ink);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 768px) {
+    .wrap { padding-inline: 40px; }
+  }
+  @media (min-width: 1280px) {
+    .wrap { padding-inline: 64px; }
+  }
+
+  /* ---- type: Archivo's width axis carries the voice ---- */
+  .wide {
+    font-variation-settings: "wdth" 118;
+  }
+  .display {
+    font-variation-settings: "wdth" 122;
+    font-weight: 620;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .h-section {
+    font-variation-settings: "wdth" 115;
+    font-size: clamp(34px, 4.4vw, 62px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .h-card {
+    font-variation-settings: "wdth" 112;
+    font-size: clamp(22px, 1.9vw, 28px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+  .lede {
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.55;
+    color: var(--color-muted);
+    max-width: 34em;
+    text-wrap: pretty;
+  }
+  .on-dark .lede { color: var(--color-soft); }
+  .meta {
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  /* ---- buttons ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 52px;
+    padding-inline: 26px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      background-color 250ms ease,
+      color 250ms ease,
+      border-color 250ms ease,
+      transform 250ms var(--ease-soft);
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-signal {
+    background: var(--color-signal);
+    color: #0c1a22;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 8px 20px -10px rgb(180 140 0 / 0.7);
+  }
+  .btn-signal:hover {
+    background: #ffd23a;
+    transform: translateY(-1px);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .btn-ink:hover { opacity: 0.88; }
+  .btn-ghost {
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+  .btn-ghost:hover { border-color: var(--color-ink); }
+  .btn-sm {
+    height: 40px;
+    padding-inline: 18px;
+    font-size: 14px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding-inline: 12px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-muted);
+  }
+
+  /* Viewfinder corner brackets: the brand's "seen" marker. Put on an absolutely
+     positioned overlay; --l is the arm length, --t the stroke. */
+  .brackets {
+    --c: var(--color-signal);
+    --l: 34px;
+    --t: 3px;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--c) 0 0) top left / var(--l) var(--t),
+      linear-gradient(var(--c) 0 0) top left / var(--t) var(--l),
+      linear-gradient(var(--c) 0 0) top right / var(--l) var(--t),
+      linear-gradient(var(--c) 0 0) top right / var(--t) var(--l),
+      linear-gradient(var(--c) 0 0) bottom left / var(--l) var(--t),
+      linear-gradient(var(--c) 0 0) bottom left / var(--t) var(--l),
+      linear-gradient(var(--c) 0 0) bottom right / var(--l) var(--t),
+      linear-gradient(var(--c) 0 0) bottom right / var(--t) var(--l);
+    background-repeat: no-repeat;
+  }
+
+  /* Engineering-grid texture, faded out towards the edges. Put on an absolute layer. */
+  .grid-bg {
+    pointer-events: none;
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 56px 56px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(ellipse 75% 70% at 35% 45%, #000 25%, transparent 78%);
+  }
+
+  /* ---- the one orchestrated moment: hero load + focus lock ---- */
+  .rise {
+    animation: rise 900ms var(--ease-soft) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .fade-in {
+    animation: fade 800ms var(--ease-soft) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .lock {
+    animation: lock 900ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .live-dot {
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes lock {
+  0% { opacity: 0; transform: scale(1.12); }
+  55% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes pulse {
+  50% { opacity: 0.25; }
+}
+@keyframes progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .fade-in, .lock {
+    animation: fade 200ms linear both;
+    animation-delay: 0ms;
+  }
+  .live-dot { animation: none; }
+  .btn { transition: none; }
+}
+
+.layer { transition: opacity 600ms ease; }
+@media (prefers-reduced-motion: reduce) { .layer { transition: none; } }
+
+/* ---- vision scene motion: parts ride the belt, only while on screen ---- */
+.vs-mv {
+  animation: vs-move linear infinite;
+  animation-duration: var(--dur);
+  animation-delay: var(--delay);
+  animation-play-state: paused;
+}
+.vs-tread {
+  animation: vs-tread linear infinite;
+  animation-duration: 1.43s;
+  animation-play-state: paused;
+}
+.vs-scan {
+  animation: vs-scan 6s linear infinite;
+  animation-play-state: paused;
+}
+.vs-run .vs-mv,
+.vs-run .vs-tread,
+.vs-run .vs-scan {
+  animation-play-state: running;
+}
+@keyframes vs-move {
+  0% { transform: translate(var(--sx), var(--sy)); opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translate(var(--ex), var(--ey)); opacity: 0; }
+}
+@keyframes vs-tread {
+  to { transform: translate(27.7px, 16px); }
+}
+@keyframes vs-scan {
+  from { transform: translateY(-4px); }
+  to { transform: translateY(754px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vs-mv, .vs-tread, .vs-scan { animation: none; }
+  .vs-scan { display: none; }
+}
+
+/* Sections ease in as they scroll into view. Pure CSS (scroll-driven animations):
+   browsers without support, and reduced-motion users, simply see the content. */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+.scroll-progress { display: none; }
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform-origin: left;
+    animation: grow linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
