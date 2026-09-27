@@ -4,6 +4,14 @@ import { validateInquiry, type Inquiry } from "@/lib/inquiry";
 const MAX = { name: 120, email: 200, company: 200, building: 300, message: 5000 };
 const oneLine = (s: string) => s.replace(/[\r\n]+/g, " ").trim();
 
+// Read a setting, ignoring surrounding quotes/whitespace (hosting dashboards store
+// quotes literally, unlike .env files). Empty counts as not set.
+const env = (name: string) => process.env[name]?.trim().replace(/^(["'])(.*)\1$/, "$2").trim() || undefined;
+
+// Sender for inquiry emails. Must be on a domain verified in Resend; Resend's own
+// onboarding@resend.dev can only deliver to the Resend account owner.
+const DEFAULT_FROM = "Capivora Website <inquiries@capivorarobotics.com>";
+
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
@@ -27,15 +35,15 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid fields" }, { status: 400 });
   }
 
-  const key = process.env.RESEND_API_KEY;
-  const to = process.env.INQUIRY_TO_EMAIL;
+  const key = env("RESEND_API_KEY");
+  const to = env("INQUIRY_TO_EMAIL");
 
   if (key && to) {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.INQUIRY_FROM_EMAIL ?? "Capivora Website <onboarding@resend.dev>",
+        from: env("INQUIRY_FROM_EMAIL") ?? DEFAULT_FROM,
         to: to.split(",").map((s) => s.trim()),
         reply_to: oneLine(data.email),
         subject: `New inquiry: ${oneLine(data.name)}${data.company ? ` (${oneLine(data.company)})` : ""}`,
